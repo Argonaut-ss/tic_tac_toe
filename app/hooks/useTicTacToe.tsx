@@ -99,18 +99,6 @@ export function useTicTacToe(playerMark: Mark) {
   resetBoard(false);
 };
 
-  // AUTO: jalankan bot pada game pertama jika player memilih O
-  // useEffect(() => {
-  //   const empty = Array(9).fill(null);
-  //   setBoard(empty);
-  //   setWinner(null);
-  //   setTurn("X");
-
-  //   if (botMark === "X") {
-  //     setTimeout(() => botMove(empty), 300);
-  //   }
-  // }, [playerMark]);
-
   useEffect(() => {
   if (!winner && turn === botMark) {
     setTimeout(() => botMove(), 300);
