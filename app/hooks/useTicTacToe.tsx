@@ -83,28 +83,32 @@ export function useTicTacToe(playerMark: Mark) {
     setTimeout(() => botMove(newBoard), 300);
   };
 
-  const resetBoard = (resetScore = false) => {
+  const resetBoard = (hard  = false) => {
     setBoard(Array(9).fill(null));
-  setWinner(null);
+    setWinner(null);
 
-  // always reset turn to "X"
-  setTurn("X");
+    // jika player memilih O -> bot harus jalan duluan
+    if (playerMark === "O") {
+      setTurn(botMark);
+    } else {
+      setTurn(playerMark);
+    }
 
-  if (resetScore) {
-    setScore({ X: 0, O: 0, D: 0 });
-  }
+    if (hard) {
+      setScore({ X: 0, O: 0, D: 0 });
+    }
   };
 
   const requestRematch = () => {
-  resetBoard(false);
-};
+    resetBoard(false);
+  };
 
   useEffect(() => {
-  if (!winner && turn === botMark) {
-    setTimeout(() => botMove(), 300);
-  }
-}, [turn, winner]);
+    if (turn === botMark && winner === null) {
+      const botTimer = setTimeout(botMove, 400);
+      return () => clearTimeout(botTimer);
+    }
+  }, [turn, winner]);
 
-  return { board, turn, winner, score, playerMove, resetBoard, requestRematch  };
+  return { board, turn, winner, score, playerMove, resetBoard, requestRematch };
 }
-
