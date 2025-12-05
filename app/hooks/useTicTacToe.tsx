@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export type Mark = "X" | "O";
 export type Cell = Mark | null;
 
 const WIN_LINES = [
-  [0,1,2],[3,4,5],[6,7,8],
-  [0,3,6],[1,4,7],[2,5,8],
-  [0,4,8],[2,4,6],
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  [0, 4, 8],
+  [2, 4, 6],
 ];
 
 export function useTicTacToe(playerMark: Mark) {
@@ -24,31 +29,30 @@ export function useTicTacToe(playerMark: Mark) {
     return null;
   };
 
-  const resetBoard = (resetScore = false) => {
-    setBoard(Array(9).fill(null));
-    setWinner(null);
-    if (resetScore) setScore({ X:0,O:0,D:0 });
-    setTurn("X");
-    if (botMark === "X") {
-      setTimeout(() => botMove(Array(9).fill(null)), 300);
-    }
-  };
-
-  const botMove = (current: Cell[]) => {
+  const botMove = (boardState?: Cell[]) => {
     if (winner) return;
-    const empty = current.map((v,i)=> v===null? i : null).filter(i=> i!==null) as number[];
+
+    const current = boardState ?? board;
+
+    const empty = current
+      .map((v, i) => (v === null ? i : null))
+      .filter((i) => i !== null) as number[];
+
     if (empty.length === 0) return;
-    const idx = empty[Math.floor(Math.random()*empty.length)];
+
+    const idx = empty[Math.floor(Math.random() * empty.length)];
     const newBoard = [...current];
     newBoard[idx] = botMark;
+
     setBoard(newBoard);
+
     const w = checkWinner(newBoard);
     if (w) {
       setWinner(w);
-      setScore(prev => ({ ...prev, [w]: prev[w] + 1 }));
+      setScore((prev) => ({ ...prev, [w]: prev[w] + 1 }));
     } else if (!newBoard.includes(null)) {
       setWinner("D");
-      setScore(prev => ({ ...prev, D: prev.D + 1 }));
+      setScore((prev) => ({ ...prev, D: prev.D + 1 }));
     } else {
       setTurn(playerMark);
     }
@@ -61,20 +65,62 @@ export function useTicTacToe(playerMark: Mark) {
 
     const newBoard = [...board];
     newBoard[idx] = playerMark;
+
     setBoard(newBoard);
+
     const w = checkWinner(newBoard);
     if (w) {
       setWinner(w);
-      setScore(prev => ({ ...prev, [w]: prev[w] + 1 }));
+      setScore((prev) => ({ ...prev, [w]: prev[w] + 1 }));
       return;
     } else if (!newBoard.includes(null)) {
       setWinner("D");
-      setScore(prev => ({ ...prev, D: prev.D + 1 }));
+      setScore((prev) => ({ ...prev, D: prev.D + 1 }));
       return;
     }
+
     setTurn(botMark);
     setTimeout(() => botMove(newBoard), 300);
   };
+
+  const resetBoard = (resetScore = false) => {
+    const empty = Array(9).fill(null);
+
+    setBoard(empty);
+    setWinner(null);
+
+    // Reset score jika diperlukan
+    if (resetScore) {
+      setScore({ X: 0, O: 0, D: 0 });
+    }
+
+    // X selalu jalan dulu
+    setTurn("X");
+
+    // Jika BOT adalah X → bot first move
+    if (botMark === "X") {
+      setTimeout(() => {
+        // Gunakan board dari state terbaru, bukan parameter
+        setBoard((prev) => {
+          const b = [...prev];
+          botMove(b);
+          return b;
+        });
+      }, 250);
+    }
+  };
+
+  // AUTO: jalankan bot pada game pertama jika player memilih O
+  useEffect(() => {
+    const empty = Array(9).fill(null);
+    setBoard(empty);
+    setWinner(null);
+    setTurn("X");
+
+    if (botMark === "X") {
+      setTimeout(() => botMove(empty), 300);
+    }
+  }, [playerMark]);
 
   return { board, turn, winner, score, playerMove, resetBoard };
 }

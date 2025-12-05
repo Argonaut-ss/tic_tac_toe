@@ -43,7 +43,7 @@ export default function Dashboard() {
         <p className="text-center text-gray-500 text-sm mb-6">REMEMBER : X GOES FIRST</p>
 
         {/* Buttons */}
-        <button onClick={() => router.push(`/game?mark=${mark}&mode=cpu`)} className="w-full py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg mb-4">
+        <button onClick={() => router.push(`/game?mark=${mark}`)} className="w-full py-4 rounded-xl bg-yellow-400 text-slate-900 font-bold text-lg mb-4">
           NEW GAME
         </button>
       </div>
