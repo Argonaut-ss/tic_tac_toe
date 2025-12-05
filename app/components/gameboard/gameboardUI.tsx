@@ -13,6 +13,7 @@ type Props = {
   score: { X: number; O: number; D: number };
   playerMove: (idx: number) => void;
   resetBoard: (resetScore?: boolean) => void; // true → reset score, false → rematch
+  requestRematch: () => void;
 };
 
 export default function GameBoardUI({
@@ -24,13 +25,12 @@ export default function GameBoardUI({
   score,
   playerMove,
   resetBoard,
+  requestRematch,
 }: Props) {
-  
   const router = useRouter();
 
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col items-center p-6 text-white">
-
       {/* Header */}
       <div className="w-full max-w-md flex items-center justify-between mb-6">
         <button
@@ -85,7 +85,7 @@ export default function GameBoardUI({
       <div className="mt-8 w-full max-w-md">
         <button
           className="w-full bg-white text-slate-900 py-4 rounded-xl font-bold shadow text-lg"
-          onClick={() => resetBoard(true)}   // reset game + score
+          onClick={() => resetBoard(true)} // reset game + score
         >
           Reset Game
         </button>
@@ -104,7 +104,7 @@ export default function GameBoardUI({
             </h2>
 
             <button
-              onClick={() => resetBoard(false)} // rematch (score tidak reset)
+              onClick={requestRematch} // rematch (score tidak reset)
               className="w-full bg-yellow-400 text-black py-3 rounded-xl font-bold"
             >
               Rematch

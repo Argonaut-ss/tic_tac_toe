@@ -6,7 +6,8 @@ import { useTicTacToe } from "../hooks/useTicTacToe";
 export default function GamePage() {
   const params = useSearchParams();
   const mark = (params.get("mark") as "X"|"O") || "X";
-  const { board, turn, winner, score, playerMove, resetBoard } = useTicTacToe(mark);
+  const { board, turn, winner, score, playerMove, resetBoard  } = useTicTacToe(mark);
+  const requestRematch = () => resetBoard(false);
 
   return (
     <GameBoardUI
@@ -18,6 +19,7 @@ export default function GamePage() {
       botMark={mark === "X"? "O" : "X"}
       playerMove={playerMove}
       resetBoard={resetBoard}
+      requestRematch={requestRematch}
     />
   );
 }

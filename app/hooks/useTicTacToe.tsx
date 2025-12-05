@@ -84,43 +84,39 @@ export function useTicTacToe(playerMark: Mark) {
   };
 
   const resetBoard = (resetScore = false) => {
-    const empty = Array(9).fill(null);
+    setBoard(Array(9).fill(null));
+  setWinner(null);
 
-    setBoard(empty);
-    setWinner(null);
+  // always reset turn to "X"
+  setTurn("X");
 
-    // Reset score jika diperlukan
-    if (resetScore) {
-      setScore({ X: 0, O: 0, D: 0 });
-    }
-
-    // X selalu jalan dulu
-    setTurn("X");
-
-    // Jika BOT adalah X → bot first move
-    if (botMark === "X") {
-      setTimeout(() => {
-        // Gunakan board dari state terbaru, bukan parameter
-        setBoard((prev) => {
-          const b = [...prev];
-          botMove(b);
-          return b;
-        });
-      }, 250);
-    }
+  if (resetScore) {
+    setScore({ X: 0, O: 0, D: 0 });
+  }
   };
 
+  const requestRematch = () => {
+  resetBoard(false);
+};
+
   // AUTO: jalankan bot pada game pertama jika player memilih O
+  // useEffect(() => {
+  //   const empty = Array(9).fill(null);
+  //   setBoard(empty);
+  //   setWinner(null);
+  //   setTurn("X");
+
+  //   if (botMark === "X") {
+  //     setTimeout(() => botMove(empty), 300);
+  //   }
+  // }, [playerMark]);
+
   useEffect(() => {
-    const empty = Array(9).fill(null);
-    setBoard(empty);
-    setWinner(null);
-    setTurn("X");
+  if (!winner && turn === botMark) {
+    setTimeout(() => botMove(), 300);
+  }
+}, [turn, winner]);
 
-    if (botMark === "X") {
-      setTimeout(() => botMove(empty), 300);
-    }
-  }, [playerMark]);
-
-  return { board, turn, winner, score, playerMove, resetBoard };
+  return { board, turn, winner, score, playerMove, resetBoard, requestRematch  };
 }
+
